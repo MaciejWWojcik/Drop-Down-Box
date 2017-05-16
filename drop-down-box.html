@@ -1,0 +1,593 @@
+<link rel="import" href="./bower_components/polymer/polymer-element.html">
+<link rel="import" href="./bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="./bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!--
+`drop-down-box`
+web component for allegro summer e-xperience 2017
+
+@demo demo/index.html
+-->
+
+<dom-module id="drop-down-box">
+    <template>
+        <style>
+            * {
+                font-family: 'Roboto', sans-serif
+            }
+
+            :host {
+                display: block;
+                margin: 0 auto;
+
+                height: 42px;
+                width: 218px;
+
+                --active-color: #3ec347;
+                --wrong-color: #ef261f;
+                --disabled-color: #e1e1e1;
+                --background-color: white;
+
+                --normal-border-color: #ebebeb;
+                --hover-border-color: #787878;
+
+                --font-color: #717171;
+                --font-active-color: #5b5b5b;
+                --font-disabled-color: #efefef;
+                --font-bold-weight: 600;
+
+                --normal-width: 100%;
+                --normal-height: 100%;
+                --item-height: 0px;
+                --lineHeight: 20px;
+
+                --border-normal-width: 1px;
+                --border-bold-width: 2px;
+                --border-diff: calc(var(--border-bold-width) - var(--border-normal-width));
+
+                --drop-padding-vert: 15px;
+                --drop-padding-hori: 11px;
+                --label-padding-left: 3px;
+
+                --label-top: calc(((var(--lineHeight) / 2) + var(--border-diff)) * -1);
+                --label-left: calc(var(--drop-padding-hori) - var(--label-padding-left));
+                --label-left-normal: calc(var(--drop-padding-hori) - var(--border-normal-width));
+                --selected-left: calc(var(--drop-padding-vert) - var(--label-padding-left));
+                --selected-top: 0;
+            }
+
+            #drop-down-button {
+                border: var(--border-normal-width) solid var(--normal-border-color);
+                border-radius: 2px;
+                box-sizing: border-box;
+                line-height: 0;
+                color: var(--font-color);
+                height: var(--normal-height);
+                position: relative;
+            }
+
+            #drop-down-button[disabled] {
+                color: var(--font-disabled-color);
+                border-color: var(--disabled-color);
+                cursor: default !important;
+            }
+
+            #drop-down-button[disabled] > #drop-down-selection-label {
+                font-weight: normal !important;
+                color: var(--font-disabled-color) !important;
+                cursor: default !important;
+            }
+
+            #drop-down-button:hover {
+                cursor: pointer;
+            }
+
+            #drop-down-sign {
+                position: absolute;
+                right: var(--label-left-normal);
+                z-index: 20;
+            }
+
+            #drop-down-sign:after {
+                content: '\f078';
+                font: normal normal normal 10px/0 FontAwesome;
+                z-index: 20;
+            }
+
+            .drop-down-label-up {
+                position: relative;
+                z-index: 10;
+                background: var(--background-color);
+                font-size: 13px;
+                padding: 0 var(--label-padding-left);
+                display: inline-block;
+                line-height: var(--lineHeight);
+                top: var(--label-top);
+                left: var(--label-left);
+            }
+
+            #drop-down-label {
+                left: var(--label-left-normal);
+            }
+
+            #drop-down-label, #drop-down-selection-label {
+                position: absolute;
+            }
+
+            #drop-down-selection-label {
+                top: var(--selected-top);
+                left: var(--selected-left);
+                line-height: var(--lineHeight);
+            }
+
+            .button-style {
+                padding: var(--drop-padding-vert) var(--drop-padding-hori);
+                width: var(--normal-width);
+                height: var(--item-height);
+                text-align: left;
+                background: transparent;
+                outline: 0;
+                border: 0;
+                line-height: 0;
+            }
+
+            .items {
+                top: calc(var(--border-bold-width) * -1);
+                left: calc(var(--border-bold-width) * -1);
+                position: relative;
+                height: inherit;
+                color: var(--font-color);
+            }
+
+            .items:hover {
+                font-weight: var(--font-bold-weight) !important;
+                color: var(--font-active-color) !important;
+            }
+
+            #drop-down-list {
+                width: var(--normal-width);
+                border: var(--border-bold-width) solid var(--hover-border-color);
+                border-radius: 2px;
+                box-sizing: border-box;
+                position: relative;
+                top: calc(var(--normal-height) * -1);
+                cursor: pointer;
+                display: block;
+                background: var(--background-color);
+                z-index: 9;
+
+                -webkit-transition: display 0.5s, background 0.5s;
+                -moz-transition: display 0.5s, background 0.5s;
+                -ms-transition: display 0.5s, background 0.5s;
+                transition: display 0.5s, background 0.5s;
+
+            }
+
+            #drop-down-list > button {
+                display: block;
+                cursor: pointer;
+            }
+
+            .info-label {
+                color: var(--wrong-color);
+                margin-top: 8px;
+                font-size: 13px;
+            }
+
+            .bottom-border {
+                height: var(--border-bold-width);
+                width: 0;
+                border-radius: 2px;
+                position: relative;
+                top: calc(var(--border-bold-width) * -1);
+
+                margin: 0 auto;
+                -webkit-transition: width 0.5s, margin 0.5s;
+                -moz-transition: width 0.5s, margin 0.5s;
+                -ms-transition: width 0.5s, margin 0.5s;
+                transition: width 0.5s, margin 0.5s;
+
+            }
+
+            .border-active {
+                background: var(--active-color);
+                width: var(--normal-width);
+            }
+
+            .border-wrong {
+                background: var(--wrong-color);
+                width: var(--normal-width);
+            }
+
+            .rotate {
+                -moz-transform: rotate(0deg);
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+
+                -webkit-animation: spin 0.4s ease 1;
+                -moz-animation: spin 0.4s ease 1;
+                animation: spin 0.4s ease 1;
+
+                -webkit-animation-fill-mode: forwards;
+                animation-fill-mode: forwards;
+            }
+
+            .rotateBack {
+                -moz-transform: rotate(180deg);
+                -webkit-transform: rotate(180deg);
+                transform: rotate(180deg);
+
+                -webkit-animation: spinBack 0.4s ease 1;
+                -moz-animation: spinBack 0.4s ease 1;
+                animation: spinBack 0.4s ease 1;
+
+                -webkit-animation-fill-mode: forwards;
+                animation-fill-mode: forwards;
+
+            }
+
+            @-moz-keyframes spin {
+                100% {
+                    -moz-transform: rotate(180deg);
+                }
+            }
+
+            @-webkit-keyframes spin {
+                100% {
+                    -webkit-transform: rotate(180deg);
+                }
+            }
+
+            @keyframes spin {
+                100% {
+                    -webkit-transform: rotate(180deg);
+                    transform: rotate(180deg);
+                }
+            }
+
+            @-moz-keyframes spinBack {
+                100% {
+                    -moz-transform: rotate(0deg);
+                }
+            }
+
+            @-webkit-keyframes spinBack {
+                100% {
+                    -webkit-transform: rotate(0deg);
+                }
+            }
+
+            @keyframes spinBack {
+                100% {
+                    -webkit-transform: rotate(0deg);
+                    transform: rotate(0deg);
+                }
+            }
+
+        </style>
+
+        <button on-click="_onDropDownButtonClick" on-mouseover="_buttonHoverIn" on-mouseout="_buttonHoverOut"
+                id="drop-down-button" class="button-style">
+            <div id="drop-down-label">[[labelTitle]]</div>
+            <div id="drop-down-selection-label">[[_currentSelectedItem]]</div>
+            <div id="drop-down-sign"></div>
+        </button>
+
+        <template is="dom-if" if="{{isActive}}">
+            <div class="bottom-border"></div>
+        </template>
+
+        <template is="dom-if" if="{{isWrong}}">
+            <div class="bottom-border "></div>
+            <div class="info-label">{{allertText}}</div>
+        </template>
+
+        <template id="drop-down-list-container" is="dom-if" if="{{_isDropDownOpen}}">
+            <div id="drop-down-list">
+                <template is="dom-repeat" items="{{itemsTitles}}">
+                    <button on-click="_onDropDownItemClick" class="button-style items">{{item}}</button>
+                </template>
+            </div>
+        </template>
+
+    </template>
+
+    <script>
+        /** @polymerElement */
+        class DropDownBox extends Polymer.Element {
+            static get is() {
+                return 'drop-down-box';
+            }
+
+            ready() {
+                super.ready();
+                this._selectedObj = this.$["drop-down-selection-label"];
+                this._dropDownObj = this.$["drop-down-button"];
+                this._labelObj = this.$["drop-down-label"];
+                this._signObj = this.$["drop-down-sign"];
+            }
+
+            constructor() {
+                super();
+
+                this.itemsTitles = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
+                this.validation = true;
+                this.labelTitle = "Miesiąc";
+                this.allertText = "Wybierz miesiąc";
+
+                this._currentSelectedItem = null;
+                this._isDropDownEntered = false;
+                this._isDropDownOpen = false;
+                this._isActiveState = false;
+                this._isWrongState = false;
+                this._lastSelectedItem = '';
+
+                this.styles = window.getComputedStyle(this);
+            }
+
+            static get properties() {
+                return {
+                    isDisable: {
+                        type: Boolean,
+                        observer: '_disabledChanged',
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    isActive: {
+                        type: Boolean,
+                        observer: '_isActiveObserver',
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    isWrong: {
+                        type: Boolean,
+                        observer: '_isWrongObserver',
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    default: {
+                        type: String,
+                        observer: '_defaultObserver',
+                        reflectToAttribute: true,
+                        notify: true
+                    }
+
+                };
+            }
+
+            setItems(items) {
+                this.itemsTitles = items;
+            }
+
+            getCurrentItem() {
+                if (this.validation) {
+                    if (this._currentSelectedItem != null) {
+                        return this._selectedObj;
+                    } else {
+                        if (!this.isDisable)this.isWrong = true;
+                    }
+                } else {
+                    return this._selectedObj;
+                }
+            }
+
+            setDisabled(shouldDisable) {
+                (shouldDisable ? this.isDisable = true : this.isDisable = false);
+            }
+
+            enable() {
+                this.isDisable = false;
+            }
+
+            disable() {
+                this.isDisable = true;
+            }
+
+            setValidator(shouldValidate) {
+                (shouldValidate ? this.validation = true : this.validation = false);
+            }
+
+            setActiveParam(activeState) {
+                (activeState ? this.isActive = true : this.isActive = false);
+            }
+
+            setWrongParam(wrongParam) {
+                (wrongParam ? this.isWrong = true : this.isWrong = false);
+            }
+
+            async _defaultObserver() {
+                this._currentSelectedItem = this.default;
+                this.isActive = true;
+                this.isWrong = false;
+                this._isDropDownEntered = true;
+                await
+                        this._sleep(10);
+                this._styleDropDownOpen();
+                this._styleDropDownClose();
+                this._refreshStyles();
+            }
+
+            async _disabledChanged(newValue) {
+                await
+                        this._sleep(10);
+                if (this._dropDownObj != null) {
+                    if (newValue) {
+                        this._dropDownObj.disabled = true;
+
+                        this._isActiveState = this.isActive;
+                        this._isWrongState = this.isWrong;
+
+                        this.isWrong = false;
+                        this.isActive = false;
+
+                        if (this.shadowRoot.querySelector('.bottom-border') != null) {
+                            this.shadowRoot.querySelector('.bottom-border').classList.remove('border-active');
+                            this.shadowRoot.querySelector('.bottom-border').classList.remove('border-wrong');
+                        }
+
+                    } else {
+                        this._dropDownObj.disabled = false;
+
+                        this.isActive = this._isActiveState;
+                        this.isWrong = this._isWrongState;
+                    }
+                }
+            }
+
+            _isWrongObserver(isWrongValue) {
+                ( isWrongValue ? this._addBorderBottomClassAsync('border-wrong') : void 0);
+            }
+
+            _isActiveObserver(isActiveValue) {
+                ( isActiveValue ? this._addBorderBottomClassAsync('border-active') : void 0);
+            }
+
+            _sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async _addBorderBottomClassAsync(className) {
+                await
+                        this._sleep(10);
+                this.shadowRoot.querySelector('.bottom-border').classList.add(className);
+            }
+
+            _onDropDownButtonClick(event) {
+                this._refreshStyles();
+
+                this.isActive = false;
+                this._isDropDownEntered = true;
+                this._isDropDownOpen = true;
+                this.isWrong = false;
+                this._lastSelectedItem = this._currentSelectedItem;
+
+                this._styleDropDownOpen();
+                this.$["drop-down-list-container"].render();
+                this._styleItems();
+
+                this._refreshStyles();
+
+                if (this.shadowRoot.querySelector('.bottom-border') != null) {
+                    this.shadowRoot.querySelector('.bottom-border').classList.remove('border-active');
+                }
+
+            }
+
+            _onDropDownItemClick(event) {
+                this._refreshStyles();
+
+                this._currentSelectedItem = event.model.item;
+                this.isActive = true;
+                this._styleDropDownClose();
+                this._isDropDownOpen = false;
+
+                this._refreshStyles();
+            }
+
+            _buttonHoverIn() {
+                this._calculateDimensions();
+
+                if (!this._isDropDownOpen) {
+                    this._dropDownObj.style.border = 'var(--border-bold-width) solid var(--hover-border-color)';
+
+                    if (this._isDropDownEntered) {
+                        this._labelObj.style.top = `${this.labelObjTopDimension - this.borderDiff}px`;
+                        this._labelObj.style.left = `${this.labelObjLeftDimension - this.borderDiff}px`;
+                        this._signObj.style.right = `${this.labelObjNormalLeftDimension - this.borderDiff}px`;
+                    } else {
+                        this._labelObj.style.left = `${this.currentLabelObjLeftDimension - this.borderDiff}px`;
+                        this._signObj.style.right = `${this.currentLabelObjLeftDimension - this.borderDiff}px`;
+                    }
+
+                    this._selectedObj.style.top = `${this.selectedObjTopDimension - this.borderDiff}px`;
+                    this._selectedObj.style.left = `${this.selectedObjLeftDimension}px`;
+
+                } else {
+                    this._labelObj.style.top = `${this.labelObjTopDimension + this.borderDiff}px`;
+                }
+            }
+
+            _buttonHoverOut() {
+                this._calculateDimensions();
+
+                if (!this._isDropDownOpen) {
+                    this._dropDownObj.style.border = 'var(--border-normal-width) solid var(--normal-border-color)';
+
+                    if (this._isDropDownEntered) {
+                        this._labelObj.style.top = `${this.labelObjTopDimension}px`;
+                        this._labelObj.style.left = `${this.labelObjLeftDimension}px`;
+                        this._signObj.style.right = `${this.labelObjNormalLeftDimension}px`;
+                    } else {
+                        this._labelObj.style.left = `${this.currentLabelObjLeftDimension + this.borderDiff}px`;
+                        this._signObj.style.right = `${this.labelObjNormalLeftDimension}px`;
+                    }
+
+                    this._selectedObj.style.left = `${this.selectedObjLeftDimension + this.borderDiff}px`;
+                    this._selectedObj.style.top = `${this.selectedObjTopDimension + this.borderDiff}px`;
+
+                } else {
+                    this._labelObj.style.top = `${this.labelObjTopDimension + this.borderDiff}px`;
+                    this._selectedObj.style.left = `${this.selectedObjLeftDimension + this.borderDiff}px`;
+                }
+            }
+
+            _calculateDimensions() {
+                this.borderDiff = parseFloat(this.styles.getPropertyValue('--border-bold-width')) - parseFloat(this.styles.getPropertyValue('--border-normal-width'));
+
+                this.internalDropDownHeight = this._dropDownObj.clientHeight - parseFloat(this.styles.getPropertyValue('--drop-padding-vert')) * 2;
+                this.labelObjTopDimension = ((parseFloat(this.styles.getPropertyValue('--lineHeight')) / 2) + this.borderDiff) * -1;
+                this.labelObjLeftDimension = parseFloat(this.styles.getPropertyValue('--drop-padding-hori')) - parseFloat(this.styles.getPropertyValue('--label-padding-left')) - parseFloat(this.styles.getPropertyValue('--border-normal-width'));
+                this.currentLabelObjLeftDimension = this._labelObj.offsetLeft;
+                this.selectedObjTopDimension = (this.internalDropDownHeight - parseFloat(this.styles.getPropertyValue('--lineHeight')) ) / 2 + parseFloat(this.styles.getPropertyValue('--drop-padding-vert'));
+                this.selectedObjLeftDimension = parseFloat(this.styles.getPropertyValue('--drop-padding-hori')) - parseFloat(this.styles.getPropertyValue('--border-bold-width'));
+                this.labelObjNormalLeftDimension = parseFloat(this.styles.getPropertyValue('--drop-padding-hori')) - parseFloat(this.styles.getPropertyValue('--border-normal-width'));
+            }
+
+            _styleDropDownOpen() {
+                this._signObj.classList.add('rotate');
+                this._signObj.classList.remove('rotateBack');
+
+                var labelLeft = parseFloat(this.styles.getPropertyValue('--drop-padding-hori')) - parseFloat(this.styles.getPropertyValue('--label-padding-left')) - parseFloat(this.styles.getPropertyValue('--border-normal-width'));
+                this._labelObj.classList.add('drop-down-label-up');
+                this._labelObj.style.left = `${labelLeft + this.borderDiff}px`;
+                this._selectedObj.style.display = 'none';
+                this._dropDownObj.style.border = '0px solid var(----normal-border-color)';
+                this._signObj.style.right = `${this.labelObjNormalLeftDimension + this.borderDiff}px`;
+            }
+
+            _styleDropDownClose() {
+                this._signObj.classList.remove('rotate');
+                this._signObj.classList.add('rotateBack');
+
+                this._selectedObj.style.display = 'block';
+                this._dropDownObj.style.border = 'var(--border-normal-width) solid var(----normal-border-color)';
+                this._selectedObj.style.color = 'var(--font-active-color)';
+                this._selectedObj.style.fontWeight = 'var(--font-bold-weight)';
+            }
+
+            _styleItems() {
+                const itemHeight = `${this._dropDownObj.clientHeight}px`;
+                var items = this.shadowRoot.querySelectorAll('.items');
+                for (var i = 0; i < items.length; i++) {
+                    items[i].style.height = itemHeight;
+
+                    if (items[i].innerText == this._lastSelectedItem) {
+                        items[i].style.fontWeight = 'var(--font-bold-weight)';
+                        items[i].style.color = 'var(--font-active-color)';
+                    } else {
+                        items[i].style.fontWeight = 'normal';
+                        items[i].style.color = 'var(--font-color)';
+                    }
+                }
+            }
+
+            _refreshStyles() {
+                this._buttonHoverIn();
+                this._buttonHoverOut();
+            }
+        }
+
+        window.customElements.define(DropDownBox.is, DropDownBox);
+    </script>
+</dom-module>
