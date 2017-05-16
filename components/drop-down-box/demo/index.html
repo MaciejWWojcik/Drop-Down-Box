@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>drop-down-box demo</title>
+
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../drop-down-box.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .descritpion {
+            text-align: right;
+            font-family: 'Roboto', sans-serif;
+            margin: 50px 0;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto', sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 24px 30%;
+            background-color: #fafafa;
+        }
+
+        demo-snippet {
+            margin-bottom:350px;
+        }
+        .demo{
+            min-height: 100px  !important;
+        }
+        drop-down-box{
+            margin-bottom:20px;
+        }
+        .my-snippet{
+            display: block;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            margin-bottom: 250px;
+            height: 200px;
+            padding: 20px;
+            background-color: white;
+        }
+        .my-snippet > drop-down-box{
+            margin-bottom: 40px;
+        }
+        .my-snippet > button{
+            width:218px;
+            margin:20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <div class="descritpion">
+        <h3> Drop-Down-Box demo</h3>
+        <h4> Maciej Wójcik 2017 maciejwwojcik@gmail.com</h4>
+        <h5> Allegro summer e-xperience</h5>
+    </div>
+
+    <h4>Basic drop-down-box</h4>
+    <demo-snippet>
+        <template>
+            <drop-down-box></drop-down-box>
+        </template>
+    </demo-snippet>
+
+    <h4>You can pre-select drop-down-box value using "default" property</h4>
+    <demo-snippet>
+        <template>
+            <drop-down-box default="Luty"></drop-down-box>
+        </template>
+    </demo-snippet>
+
+    <h4>You can disable empty drop-down-box as well as a filled in one using "is-disable" parameter</h4>
+    <demo-snippet>
+        <template>
+            <drop-down-box is-disable></drop-down-box>
+            <p></p>
+            <drop-down-box default="Luty" is-disable></drop-down-box>
+        </template>
+    </demo-snippet>
+
+    <h4>drop-down-box can also take "is-wrong" parameter</h4>
+    <demo-snippet>
+        <template>
+            <drop-down-box is-wrong ></drop-down-box>
+        </template>
+    </demo-snippet>
+
+    <h4>"is-active" is standard behaviour when user clicks on an item, but it can be a parameter too</h4>
+    <demo-snippet>
+        <template>
+            <drop-down-box is-active></drop-down-box>
+        </template>
+    </demo-snippet>
+
+    <h4>drop-down-box is responsive. By default it is 218px by 42px, but developer can change it to whatever he wants</h4>
+    <demo-snippet>
+        <template>
+            <drop-down-box style="height: 58px"></drop-down-box>
+            <drop-down-box style="width: 100%"></drop-down-box>
+
+        </template>
+    </demo-snippet>
+
+    <script>
+        function getValue(){
+            var box = document.getElementById("validationExample");
+            var val = box.getCurrentItem();
+            var btn = document.getElementById("valButton");
+            (val != null ? btn.textContent=val.innerText : btn.textContent="undefined");
+        }
+        function enable(){
+            var box = document.getElementById("disableExample");
+            box.enable();
+        }
+        function disable() {
+            var box = document.getElementById("disableExample");
+            box.disable();
+        }
+    </script>
+
+    <h4>drop-down-box component has its own validation. By default it is set to true.</h4>
+    This example shows behaviour of a component when user wants to get an item using component.getCurrentItem(). Test it with blank and filled box.
+    <div class="my-snippet">
+        <drop-down-box id="validationExample"></drop-down-box>
+        <button id="valButton" onclick="getValue()">getValue</button>
+    </div>
+
+    <h4>Another example shows behaviour of drop-down-box when user decides to dynamically disable/enable parameter</h4>
+    <div class="my-snippet">
+        <drop-down-box id="disableExample"></drop-down-box>
+        <button id="enable" onclick="enable()">enable</button>
+        <button id="disable" onclick="disable()">disable</button>
+    </div>
+
+</div>
+</body>
+</html>

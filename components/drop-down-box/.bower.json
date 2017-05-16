@@ -1,0 +1,27 @@
+{
+  "name": "drop-down-box",
+  "description": "web component for allegro summer e-xperience 2017",
+  "main": "drop-down-box.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0-rc.2"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#2.0-preview",
+    "web-component-tester": "^6.0.0-prerelease.5",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0-rc.5"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0-rc.2"
+  },
+  "homepage": "https://github.com/MaciejWWojcik/drop-down-box",
+  "_release": "859886767b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "859886767b6b16b8e659fb56f048627c40f39756"
+  },
+  "_source": "https://github.com/MaciejWWojcik/drop-down-box.git",
+  "_target": "master",
+  "_originalSource": "MaciejWWojcik/drop-down-box",
+  "_direct": true
+}
