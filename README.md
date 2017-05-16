@@ -33,13 +33,13 @@ Można ściągniąć kod źródłowy z githuba, albo zainstalować komponent wpi
     bower install MaciejWWojcik/drop-down-box
 
 
-a następnie wpisując
+a następnie wpisując w katalogu głównym ściągniętego projektu ( domyślnie ./bower_components/drop-down-box/)
 
     bower install
 
 Uruchomienie komponentu następuje poprzez wpisanie w konsole
 
-    polymer-serve
+    polymer serve
 
 na konsoli pojawi się informacją na jakim adresie i porcie został wystawiony dany komponent.
 
@@ -57,6 +57,8 @@ Komponentu używamy jak każdy inny element deklarując go w kodzie html
     <drop-down-box></drop-down-box>
 
 i importując plik drop-down-box.html w nagłówku
+
+> kod JS komponentu dostępny jest w pliku `drop-down-box.html`
 
 **Komponent powinien już działać**
 
@@ -83,11 +85,17 @@ API
 -------------------
 Poniżej przedstawiam listę funkcji przygotowanych dla developera.
 
-`setItems(string[])` – zmienia aktualną listę elementów na liście z podaną w argumencie
-`getCurrentItem()` – zwraca aktualnie wybrany element z listy
-`setDisabled(Boolean)` – ustawia zmienną disabled zgodnie z argumentem funkcji
-`enable()` – ustawia zmienną disabled na false
-`disable()` – ustawia zmienną disabled na true
-`setValidator(Boolean)` – włącza lub wyłącza walidacje pola zgodnie z argumentem funkcji
-`setActiveParam(Boolean)` – ustawia wartość zmiennej is-active zgodnie z argumentem
-`setWrongParam(Boolean)` - ustawia wartość zmiennej is-wrong zgodnie z argumentem
+ - `setItems(string[])` – zmienia aktualną listę elementów na liście z
+   podaną w argumencie
+ -  `getCurrentItem()` – zwraca aktualnie wybrany element z listy
+ -    `setDisabled(Boolean)` – ustawia zmienną disabled zgodnie z
+   argumentem funkcji
+ - `enable()` – ustawia zmienną disabled na
+   false `disable()` – ustawia zmienną disabled na true
+ - `setValidator(Boolean)` – włącza lub wyłącza walidacje pola zgodnie z
+   argumentem funkcji
+ - `setActiveParam(Boolean)` – ustawia wartość
+   zmiennej is-active zgodnie z argumentem
+ - `setWrongParam(Boolean)` -
+   ustawia wartość zmiennej is-wrong zgodnie z argumentem
+
